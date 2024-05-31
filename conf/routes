@@ -1,0 +1,23 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# https://www.playframework.com/documentation/latest/ScalaRouting
+# ~~~~
+
+# An example controller showing a sample home page
+GET     /                               controllers.LoginController.index
+GET     /getUsers                       controllers.LoginController.getUsers
+GET     /sign-up                        controllers.LoginController.signUpPage
+POST    /addUser                        controllers.LoginController.userCreation
+POST    /afterLogin                     controllers.LoginController.loginCheck
+GET     /getProducts                    controllers.ProductController.getList
+GET     /getProductList                 controllers.ProductController.listProducts(user: String)
+POST    /getProductList                 controllers.ProductController.listProducts(user: String)
+POST    /addProduct                     controllers.ProductController.addProduct
+POST    /deleteProduct                  controllers.ProductController.deleteProduct
+POST    /updateProduct                  controllers.ProductController.updateProductQuantity
+POST    /reduceQuantity                 controllers.ProductController.reduceProductQuantity
+GET     /lessStockViewer                controllers.ProductController.lessStockViewer
+GET     /logOut                         controllers.ProductController.logOutAction
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

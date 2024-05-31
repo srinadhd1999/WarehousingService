@@ -1,4 +1,4 @@
-name := """LoginService"""
+name := """WarehousingService"""
 
 version := "1.0-SNAPSHOT"
 

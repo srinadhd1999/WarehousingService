@@ -115,7 +115,7 @@ class ProductController @Inject()(productRepository: ProductRepository, userRepo
   }
 
   def logOutAction: Action[AnyContent] = Action {
-    Redirect("http://localhost:9000")
+    Redirect(routes.LoginController.index)
   }
 
 }

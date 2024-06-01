@@ -80,6 +80,6 @@ class LoginController @Inject()(userRepository: UserRepository, productControlle
   }
 
   def signUpPage: Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
-    Ok(views.html.signup())
+      Ok(views.html.signup())
   }
 }

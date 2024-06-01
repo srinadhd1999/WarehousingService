@@ -88,7 +88,7 @@ class ProductController @Inject()(productRepository: ProductRepository, userRepo
         Redirect(routes.ProductController.listProducts(user))
       }
     }.getOrElse(Future.successful(Redirect(routes.ProductController.listProducts(name))))
-    }
+  }
 
   def reduceProductQuantity(): Action[AnyContent] = Action.async { implicit request =>
     val postVals = request.body.asFormUrlEncoded
@@ -117,5 +117,4 @@ class ProductController @Inject()(productRepository: ProductRepository, userRepo
   def logOutAction: Action[AnyContent] = Action {
     Redirect(routes.LoginController.index)
   }
-
 }

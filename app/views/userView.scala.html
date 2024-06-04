@@ -33,7 +33,34 @@
                             }
                         });
                     }
+
+                    function loadForm() {
+                        const formHtml = `
+                        <form class="text-center" action="reduceQuantity" method="post">
+                            <div class="form-group">
+                                <label for="product_id">Product ID:</label>
+                                <input type="text" class="form-control d-inline-block w-50" id="product_id" name="product_id" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="quantity">Quantity to decrease:</label>
+                                <input type="text" class="form-control d-inline-block w-50" id="quantity" name="quantity" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="location">Location:</label>
+                                <input type="text" class="form-control d-inline-block w-50" id="location" name="location" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Update Product</button>
+                        </form>
+                        <br>
+                        <form class="text-center" action="logOut">
+                            <button type="submit" class="btn btn-secondary">Logout</button>
+                        </form>
+                    `;
+                        $("#formContainer").html(formHtml);
+                    }
+
                     loadProducts();
+                    loadForm()
                 });
         </script>
     </head>
@@ -63,27 +90,8 @@
                 }
                 </tbody>
             </table>
-
             <h4 class="text-center my-4">Decrease product quantity at our location after exporting</h4>
-            <form class="text-center" action="reduceQuantity" method="post">
-                <div class="form-group">
-                    <label for="product_id">Product ID:</label>
-                    <input type="text" class="form-control d-inline-block w-50" id="product_id" name="product_id" required>
-                </div>
-                <div class="form-group">
-                    <label for="quantity">Quantity to decrease:</label>
-                    <input type="text" class="form-control d-inline-block w-50" id="quantity" name="quantity" required>
-                </div>
-                <div class="form-group">
-                    <label for="location">Location:</label>
-                    <input type="text" class="form-control d-inline-block w-50" id="location" name="location" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Update Product</button>
-            </form>
-            <br>
-            <form class="text-center" action="logOut">
-                <button type="submit" class="btn btn-secondary">Logout</button>
-            </form>
+            <div id="formContainer"></div>
         </div>
     </body>
 }

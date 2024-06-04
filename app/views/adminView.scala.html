@@ -33,31 +33,11 @@
                                 }
                             });
                         }
-                        loadProducts();
-                    });
-            </script>
-        </head>
-        <div class="container">
-            <h1 align="center">Welcome, @userName</h1>
-            <h4 class="text-center my-4">Products available at all warehouses</h4>
-            <table class="table table-striped table-bordered text-center">
-                <thead class="thead-dark">
-                    <tr>
-                        <th>Product Id</th>
-                        <th>Product Name</th>
-                        <th>Quantity Available</th>
-                        <th>Warehouse User</th>
-                        <th>Warehouse Location</th>
-                    </tr>
-                </thead>
-                <tbody id="productData">
-                </tbody>
-            </table>
 
-            <h4 class="text-center my-4"><a href="@routes.ProductController.lessStockViewer">Show me the areas where stock is less</a></h4>
-
-            <h4 class="text-center my-4">Add a new product to a location</h4>
-            <form class="text-center" action="addProduct" method="post">
+                        function loadHtml() {
+                            const html = `<h4 class="text-center my-4"><a href="@routes.ProductController.lessStockViewer">Show me the areas where stock is less</a></h4>
+                <h4 class="text-center my-4">Add a new product to a location</h4>
+                <form class="text-center" action="addProduct" method="post">
                 <div class="form-group">
                     <label for="product_id">Product ID:</label>
                     <input type="text" class="form-control" id="product_id" name="product_id" required>
@@ -110,5 +90,31 @@
             <form class="text-center" action="logOut">
                 <button type="submit" class="btn btn-secondary mt-4">Logout</button>
             </form>
+                            `;
+                            $("#formContainer").html(html);
+                        }
+                        loadProducts();
+                        loadHtml()
+                    });
+            </script>
+        </head>
+        <div class="container">
+            <h1 align="center">Welcome, @userName</h1>
+            <h4 class="text-center my-4">Products available at all warehouses</h4>
+            <table class="table table-striped table-bordered text-center">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Product Id</th>
+                        <th>Product Name</th>
+                        <th>Quantity Available</th>
+                        <th>Warehouse User</th>
+                        <th>Warehouse Location</th>
+                    </tr>
+                </thead>
+                <tbody id="productData">
+                </tbody>
+            </table>
+
+            <div id="formContainer"></div>
         </div>
     }

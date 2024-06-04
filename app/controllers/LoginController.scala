@@ -5,7 +5,6 @@ import play.api.libs.json._
 import play.api.mvc._
 import java.util.UUID
 import javax.inject._
-import controllers.routes._
 import scala.concurrent.{ExecutionContext, Future}
 
 class LoginController @Inject()(userRepository: UserRepository, productController: ProductController, cc: ControllerComponents)(implicit ec: ExecutionContext) extends AbstractController(cc) {

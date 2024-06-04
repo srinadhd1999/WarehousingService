@@ -1,6 +1,6 @@
 package controllers
 
-import models.{ProductRepository, UserRepository, Product, User}
+import models.{Product, ProductRepository, UserRepository}
 import play.api.libs.json._
 import play.api.mvc._
 import services.KafkaMessageProducer
@@ -12,9 +12,15 @@ class ProductController @Inject()(productRepository: ProductRepository, userRepo
                                   kafkaMessageProducer: KafkaMessageProducer, cc: ControllerComponents)(implicit ec: ExecutionContext) extends AbstractController(cc) {
   implicit val userFormat: Format[Product] = Json.format[Product]
 
-  def getList: Action[AnyContent] = Action.async {
-    productRepository.list().map { product =>
-      Ok(Json.toJson(product))
+  def getList(user: String): Action[AnyContent] = Action.async {
+    if (user != "admin") {
+      productRepository.fetchProducts(user).map { products =>
+        Ok(Json.toJson(products))
+      }
+    } else {
+      productRepository.list().map { products =>
+        Ok(Json.toJson(products))
+      }
     }
   }
 
@@ -44,20 +50,21 @@ class ProductController @Inject()(productRepository: ProductRepository, userRepo
     }.getOrElse(Future.successful(Redirect(routes.ProductController.listProducts("admin"))))
   }
 
-  def listProducts(user: String): Action[AnyContent] = Action.async {
+  def listProducts(user: String): Action[AnyContent] = Action.async { implicit request =>
     if (user != "admin") {
       productRepository.fetchProducts(user).map { products =>
-        Ok(views.html.userView(products))
+        Ok(views.html.userView(products, user))
       }
     } else {
       productRepository.list().map { products =>
-        Ok(views.html.adminView(products))
+        Ok(views.html.adminView("admin"))
       }
     }
   }
 
   def deleteProduct(): Action[AnyContent] = Action.async { implicit request =>
     val postVals = request.body.asFormUrlEncoded
+    val sessionUser = request.session.get("user").getOrElse("")
     postVals.map { args =>
       val id = args("product_id").head
       val location = args("location").head
@@ -66,36 +73,33 @@ class ProductController @Inject()(productRepository: ProductRepository, userRepo
       val jsonString = s"{\"id\":\"$uId\", \"operation\":\"delete_current\", \"product_id\":\"$id\", \"location\": \"$location\"}"
       kafkaMessageProducer.sendMessage(jsonString)
       productRepository.list().map { products =>
-        Redirect(routes.ProductController.listProducts("admin"))
+        Redirect(routes.ProductController.listProducts(sessionUser))
       }
-    }.getOrElse(Future.successful(Redirect(routes.ProductController.listProducts("admin"))))
+    }.getOrElse(Future.successful(Redirect(routes.ProductController.listProducts(sessionUser))))
   }
 
   def updateProductQuantity(): Action[AnyContent] = Action.async { implicit request =>
     val postVals = request.body.asFormUrlEncoded
-    var name = ""
+    val sessionUser = request.session.get("user").getOrElse("")
     postVals.map { args =>
       val id = args("product_id").head
-      val user = args("user").head
       val quantityToIncrease = args("quantity").head.toInt
       val location = args("location").head
-      name = user
       val uId = idGenerator()
       productRepository.incrementQuantity(id, location, quantityToIncrease)
       val jsonString = s"{\"id\":\"$uId\", \"operation\":\"increase_current\", \"increase_content\":\"$quantityToIncrease\", \"product_id\":\"$id\", \"location\": \"$location\"}"
       kafkaMessageProducer.sendMessage(jsonString)
       productRepository.list().map { products =>
-        Redirect(routes.ProductController.listProducts(user))
+        Redirect(routes.ProductController.listProducts(sessionUser))
       }
-    }.getOrElse(Future.successful(Redirect(routes.ProductController.listProducts(name))))
+    }.getOrElse(Future.successful(Redirect(routes.ProductController.listProducts(sessionUser))))
   }
 
   def reduceProductQuantity(): Action[AnyContent] = Action.async { implicit request =>
     val postVals = request.body.asFormUrlEncoded
-    var name = ""
+    val sessionUser = request.session.get("user").getOrElse("")
     postVals.map { args =>
       val id = args("product_id").head
-      val userName = args("user").head
       val quantityToDecrease = args("quantity").head.toInt
       val location = args("location").head
       val uId = idGenerator()
@@ -103,9 +107,9 @@ class ProductController @Inject()(productRepository: ProductRepository, userRepo
       val jsonString = s"{\"id\":\"$uId\", \"operation\":\"decrease_current\", \"decrease_content\":\"$quantityToDecrease\", \"product_id\":\"$id\", \"location\": \"$location\"}"
       kafkaMessageProducer.sendMessage(jsonString)
       productRepository.list().map { products =>
-        Redirect(routes.ProductController.listProducts(userName))
+        Redirect(routes.ProductController.listProducts(sessionUser))
       }
-    }.getOrElse(Future.successful(Redirect(routes.ProductController.listProducts(name))))
+    }.getOrElse(Future.successful(Redirect(routes.ProductController.listProducts(sessionUser))))
   }
 
   def lessStockViewer(): Action[AnyContent] = Action.async {

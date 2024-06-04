@@ -6,10 +6,10 @@
 # An example controller showing a sample home page
 GET     /                               controllers.LoginController.index
 GET     /getUsers                       controllers.LoginController.getUsers
+GET     /getList                        controllers.ProductController.getList(user: String)
 GET     /sign-up                        controllers.LoginController.signUpPage
 POST    /addUser                        controllers.LoginController.userCreation
 POST    /afterLogin                     controllers.LoginController.loginCheck
-GET     /getProducts                    controllers.ProductController.getList
 GET     /getProductList                 controllers.ProductController.listProducts(user: String)
 POST    /getProductList                 controllers.ProductController.listProducts(user: String)
 POST    /addProduct                     controllers.ProductController.addProduct
